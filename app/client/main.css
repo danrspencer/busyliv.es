@@ -1,0 +1,17 @@
+/* CSS declarations go here */
+
+ul {
+    margin: 0 auto;
+    text-align: center;
+}
+
+li {
+    display: inline-block;
+    vertical-align: top;
+    width: 15px;
+    height: 15px;
+    background: darkolivegreen;
+    border: 1px solid black;
+    font-size: .5em;
+    color: white;
+}
