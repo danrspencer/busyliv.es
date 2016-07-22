@@ -8,9 +8,9 @@ ul {
 li {
     display: inline-block;
     vertical-align: top;
-    width: 15px;
-    height: 15px;
-    background: darkolivegreen;
+    width: 25px;
+    height: 25px;
+    background: orange;
     border: 1px solid black;
     font-size: .5em;
     color: white;
