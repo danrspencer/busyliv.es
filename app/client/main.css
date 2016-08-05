@@ -6,6 +6,13 @@ ul {
 }
 
 li {
+    -moz-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    -webkit-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+
+    cursor: pointer;
+
     display: inline-block;
     vertical-align: top;
     width: 25px;
@@ -14,4 +21,9 @@ li {
     border: 1px solid black;
     font-size: .5em;
     color: white;
+}
+
+li:hover {
+    background: greenyellow;
+
 }

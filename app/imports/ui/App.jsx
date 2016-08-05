@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 
-import { generateCalendar, nlpMoment } from '../func/date.js';
+import { generateCalendar, nlpMoment, uid } from '../func/utils.js';
 
+import Events from '../api/events.js';
 import Calendar from './Calendar.jsx';
+
+import date from 'date.js';
 
 export default React.createClass({
     getInitialState() {
@@ -31,10 +34,27 @@ export default React.createClass({
         const end = event.target.value;
         const endDate = nlpMoment(end);
 
+        date(text);
+
         this.setState(endDate == null
             ? { end }
             : { end, endDate }
         );
+    },
+
+    createEvent() {
+        const event = {
+            uid: uid(),
+            calendar: this.getCalendar()
+        };
+
+        Events.insert(event);
+
+        console.log(event);
+    },
+
+    getCalendar() {
+        return generateCalendar(this.state.startDate, this.state.endDate)
     },
 
     render() {
@@ -44,6 +64,9 @@ export default React.createClass({
                     <h1>busyliv.es</h1>
                 </header>
 
+                Event title <input type="text" value="" />
+                <br /><br />
+
                 Create event between
                 <input type="text" value={this.state.start} onChange={this.onStartDateChange} />
                 and
@@ -51,7 +74,9 @@ export default React.createClass({
 
                 <br /><br /><br />
 
-                <Calendar days={generateCalendar(this.state.startDate, this.state.endDate)} />
+                <Calendar days={this.getCalendar()} />
+
+                <button onClick={this.createEvent}>Create event!</button>
             </div>
         );
     }
