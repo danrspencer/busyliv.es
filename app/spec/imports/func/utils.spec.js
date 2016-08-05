@@ -3,7 +3,7 @@ import { times } from 'ramda';
 
 import { expect } from 'meteor/practicalmeteor:chai';
 
-import { generateCalendar, nlpMoment } from '../../../imports/func/date.js'
+import { generateCalendar, nlpMoment } from '../../../imports/func/utils.js'
 
 describe('generateCalendar', () => {
     it('returns the length of the diff between days in days', () => {
@@ -42,16 +42,5 @@ describe('generateCalendar', () => {
 
             expect(actual).to.equal(expected);
         });
-    });
-});
-
-describe('nlpMoment', () => {
-    it('returns a moment date for the given text', () => {
-        const result = nlpMoment('today');
-
-        const actual = result.format('DD-MM-YYYY');
-        const expected = moment().format('DD-MM-YYYY');
-
-        expect(actual).to.equal(expected);
     });
 });

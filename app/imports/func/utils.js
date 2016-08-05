@@ -1,5 +1,4 @@
 import moment from 'moment';
-import date from 'date.js';
 
 import { curry, map, times } from 'ramda';
 
@@ -16,10 +15,6 @@ const generateCalendar = (startDate, endDate) => {
     return map((day) => ({ date: day }), dayList);
 };
 
-const nlpMoment = (text) => {
-    const parsedDate = date(text);
+const uid = () => Math.random().toString(36).substr(2, 16);
 
-    return moment(parsedDate);
-};
-
-export { generateCalendar, nlpMoment }
+export { generateCalendar, uid }
