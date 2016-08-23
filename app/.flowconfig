@@ -1,4 +1,6 @@
-options]
+[options]
+
+
 # Absolute path support:
 # e.g. "/collections/todos"
 module.name_mapper='^\/\(.*\)$' -> '<PROJECT_ROOT>/\1'
