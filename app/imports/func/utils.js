@@ -1,21 +1,20 @@
-/* @flow */
-
 import moment from 'moment';
 import { curry, map, times } from 'ramda';
 
 const generateCalendar = (startDate: string, endDate: string) => {
-    const incrementDay = curry((day, amount) => day.clone().add(amount, 'day'));
-    const generateDayList = (startDay, length) => times(incrementDay(startDay), length);
-
     const start = moment(startDate);
     const end = moment(endDate);
     const days = end.diff(start, 'days') + 1;
 
-    const dayList = generateDayList(start, days);
+    const dayList = [];
 
-    return map((day) => ({ date: day }), dayList);
+    for (let n = 0; n < days; n++) {
+        dayList.push(start.clone().add(n, 'day'));
+    }
+
+    return dayList.map((day) => ({ date: day }));
 };
 
-const uid = () => Math.random().toString(36).substr(2, 16);
+const uid = (length) => Math.random().toString(36).substr(2, length);
 
 export { generateCalendar, uid }

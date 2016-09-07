@@ -7,40 +7,44 @@ import { generateCalendar, nlpMoment } from '../../../imports/func/utils.js'
 
 describe('generateCalendar', () => {
     it('returns the length of the diff between days in days', () => {
-        const result = generateCalendar({ year: 2000, month: 1, day: 1 }, { year: 2000, month: 1, day: 5 });
+        const result = generateCalendar('2010/01/01', '2010/01/05');
 
         expect(result.length).to.equal(5);
     });
 
-    it('returns the first element as the given date', () => {
-        const startDate = { year: 2010, month: 5, day: 1 };
-        const result = generateCalendar(startDate, { year: 2010, month: 6, day: 1 });
+    it('returns the first element as the given start date', () => {
+        const startDate = '2010/05/01';
+        const endDate = '2010/06/01';
+        const result = generateCalendar(startDate, endDate);
 
-        const actual = result[0].date.format('DD-MM-YYYY');
-        const expected = moment(startDate).format('DD-MM-YYYY');
+        const actual = result[0].date;
+        const expected = new Date(startDate);
 
-        expect(actual).to.equal(expected);
+        expect(actual).to.deep.equal(expected);
     });
 
     it('returns the last element as the given end date', () => {
-        const endDate = { year: 2010, month: 5, day: 30 };
-        const result = generateCalendar({ year: 2010, month: 5, day: 1 }, endDate);
+        const startDate = '2010/05/01';
+        const endDate = '2010/06/01';
+        const result = generateCalendar(startDate, endDate);
 
-        const actual = result[result.length - 1].date.format('DD-MM-YYYY');
-        const expected = moment(endDate).format('DD-MM-YYYY');
+        const actual = result[result.length - 1].date;
+        const expected = new Date(endDate);
 
-        expect(actual).to.equal(expected);
+        expect(actual).to.deep.equal(expected);
     });
 
     it('returns a list of contiguous days', () => {
-        const startDate = { year: 2000, month: 1, day: 1 };
-        const result = generateCalendar(startDate, { year: 2000, month: 1, day: 6 });
+        const startDate = '2010/05/01';
+        const endDate = '2010/06/01';
+        const result = generateCalendar(startDate, endDate);
 
         result.forEach((item, index) => {
-            const actual = item.date.format('DD-MM-YYYY');
-            const expected = moment(startDate).add(index, 'day').format('DD-MM-YYYY');
+            const actual = item.date;
+            const expected = new Date(startDate);
+            expected.setDate(expected.getDate() + index);
 
-            expect(actual).to.equal(expected);
+            expect(actual).to.deep.equal(expected);
         });
     });
 });

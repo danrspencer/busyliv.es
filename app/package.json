@@ -11,10 +11,17 @@
     "meteor-node-stubs": "~0.2.0",
     "moment": "^2.14.1",
     "ramda": "^0.21.0",
-    "react": "^15.2.1",
+    "react": "^15.3.1",
     "react-addons": "^0.9.1-deprecated",
-    "react-addons-transition-group": "^15.2.1",
-    "react-dom": "^15.2.1"
+    "react-addons-create-fragment": "^15.3.1",
+    "react-addons-css-transition-group": "^15.3.1",
+    "react-addons-linked-state-mixin": "^15.3.1",
+    "react-addons-perf": "^15.3.1",
+    "react-addons-pure-render-mixin": "^15.3.1",
+    "react-addons-test-utils": "^15.3.1",
+    "react-addons-transition-group": "^15.3.1",
+    "react-addons-update": "^15.3.1",
+    "react-dom": "^15.3.1"
   },
   "devDependencies": {
     "enzyme": "^2.4.1",
