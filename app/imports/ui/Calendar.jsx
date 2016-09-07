@@ -1,17 +1,15 @@
+import moment from 'moment';
 import React, { Component, PropTypes } from 'react';
 import { compose, groupBy, values, map, mapObjIndexed, reduce } from 'ramda';
 
-const Month = React.createClass({
-    render: function() {
-        return <ul>
-            {map((day) => <Day key={day.date.format('DD')} day={day} />, this.props.month)}
-        </ul>
-    }
-});
+const weekDays = [1,2,3,4,5,6,0];
+
+
+// have colours for months, winter blue, etc...
 
 const Day = React.createClass({
     render: function() {
-        return <li>{this.props.day.date.format('DD')}</li>;
+        return <li>{this.props.day.date.date()}</li>;
     }
 });
 
@@ -28,9 +26,30 @@ export default React.createClass({
     ),
 
     render() {
+        const firstDay = this.props.days[0].date;
+
         return (
             <div>
-                { this.renderMonths(this.props.days) }
+                <div>
+                    Float me left with month name
+                </div>
+                <div>
+                    <ul>
+                        { weekDays.map(
+                            (dayOfWeek) => <li> { moment().weekday(dayOfWeek).format('dd') } </li> )
+                        }
+                    </ul>
+
+                    <ul>
+                        {
+                            weekDays.filter((dayOfWeek) => dayOfWeek < firstDay.weekday() - 1)
+                                .map(() => <li>X</li>)
+                        }
+                        { this.props.days.map(
+                            (day) => <Day key={day.date.format('YYYYMMDD')} day={day} /> ) }
+                    </ul>
+
+                </div>
             </div>
         );
     }
