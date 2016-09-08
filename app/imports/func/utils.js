@@ -12,7 +12,7 @@ const generateCalendar = (startDate: string, endDate: string) => {
         dayList.push(start.clone().add(n, 'day'));
     }
 
-    return dayList.map((day) => ({ date: day }));
+    return dayList.map((day) => ({ date: day.toDate() }));
 };
 
 const uid = (length) => Math.random().toString(36).substr(2, length);

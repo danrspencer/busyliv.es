@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React, { Component, PropTypes } from 'react';
-import { compose, groupBy, values, map, mapObjIndexed, reduce } from 'ramda';
+import { apply, compose, groupBy, map, mapObjIndexed, reduce, values } from 'ramda';
 
 const weekDays = [1,2,3,4,5,6,0];
 
@@ -19,14 +19,8 @@ export default React.createClass({
         days: PropTypes.array.isRequired
     },
 
-    renderMonths: compose(
-        values,
-        mapObjIndexed((month, monthNum) => <Month key={monthNum} month={month} />),
-        groupBy(day => day.date.month())
-    ),
-
     render() {
-        const firstDay = this.props.days[0].date;
+        const firstDay = moment(this.props.days[0].date);
 
         return (
             <div>
@@ -45,8 +39,10 @@ export default React.createClass({
                             weekDays.filter((dayOfWeek) => dayOfWeek < firstDay.weekday() - 1)
                                 .map(() => <li>X</li>)
                         }
-                        { this.props.days.map(
-                            (day) => <Day key={day.date.format('YYYYMMDD')} day={day} /> ) }
+                        { this.props.days.map((day) => compose(
+                            (mo) => <Day key={mo.date.format('YYYYMMDD')} day={mo} />,
+                            moment)
+                        )}
                     </ul>
 
                 </div>
