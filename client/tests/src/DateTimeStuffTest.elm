@@ -1,10 +1,12 @@
 module Src.DateTimeStuffTest exposing (..)
 
-import Date
-import Time
-import Test exposing (..)
+import Date exposing (Date)
 import Expect
 import Fuzz exposing (intRange)
+import List
+import Maybe exposing (withDefault)
+import Test exposing (..)
+import Time
 
 
 --
@@ -15,7 +17,7 @@ import DateTimeStuff
 all : Test
 all =
     describe "DateTimeStuff"
-        [ parseDate, duration, addTime, dateLessThan ]
+        [ parseDate, duration, addTime, dateLessThan, dateList ]
 
 
 parseDate : Test
@@ -33,9 +35,6 @@ parseDate =
                 let
                     result =
                         DateTimeStuff.parseDate "01-01-2000"
-
-                    millennium =
-                        946684800 * 1000
                 in
                     Expect.equal (Date.toTime result) millennium
         ]
@@ -140,4 +139,40 @@ dateLessThan =
 dateList : Test
 dateList =
     describe "dateList"
-        []
+        [ test "returns a list with the first element as the start date" <|
+            \() ->
+                let
+                    end =
+                        millennium + 100000
+
+                    result =
+                        DateTimeStuff.dateList (Date.fromTime millennium) (Date.fromTime end)
+                in
+                    Expect.equal (Date.toTime <| firstDateFromList result) millennium
+        , test "each date is one day on from the previous" <|
+            \() ->
+                let
+                    end =
+                        millennium + 100000
+
+                    result =
+                        DateTimeStuff.dateList (Date.fromTime millennium) (Date.fromTime end)
+
+                    firstDate =
+                        List.head result |> withDefault (Date.fromTime 0)
+                in
+                    Expect.equal (Date.toTime firstDate) millennium
+        ]
+
+
+
+-- HELPERS
+
+
+millennium =
+    946684800 * 1000
+
+
+firstDateFromList : List Date -> Date
+firstDateFromList =
+    List.head >> withDefault (Date.fromTime 0)

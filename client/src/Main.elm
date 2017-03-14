@@ -48,6 +48,14 @@ type Msg
 -- VIEW
 
 
+toListItem : a -> Html Msg
+toListItem =
+    li []
+        << List.singleton
+        << text
+        << toString
+
+
 view : Model -> Html Msg
 view model =
     let
@@ -86,11 +94,7 @@ view model =
             , br [] []
             , ul [] <|
                 List.map
-                    (li []
-                        << List.singleton
-                        << text
-                        << toString
-                    )
+                    (toListItem << isoDateString)
                     (dateList model.startDate endDate)
             ]
 

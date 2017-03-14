@@ -1,6 +1,7 @@
 module DateTimeStuff exposing (..)
 
 import Date exposing (Date, fromTime, toTime)
+import Result exposing (withDefault)
 import Time exposing (Time)
 
 
@@ -23,7 +24,7 @@ oneWeek =
 
 parseDate : String -> Date
 parseDate =
-    Result.withDefault (Date.fromTime 0) << Date.fromString
+    Date.fromString >> withDefault (Date.fromTime 0)
 
 
 duration : Date -> Date -> Float
@@ -58,7 +59,11 @@ dateLessThan a b =
 
 dateList : Date -> Date -> List Date
 dateList startDate endDate =
-    if dateLessThan startDate endDate then
-        startDate :: dateList (addDay startDate) endDate
-    else
-        []
+    [ startDate ]
+
+
+
+--    if dateLessThan startDate endDate then
+--        startDate :: dateList (addDay startDate) endDate
+--    else
+--        [ endDate ]
