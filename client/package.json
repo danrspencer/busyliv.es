@@ -4,21 +4,25 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "elm-reactor",
+
     "test": "elm-test",
+    "test-watch": "elm-test --watch",
+
     "elm": "elm",
     "elm-repl": "elm-repl",
     "elm-reactor": "elm-reactor",
     "elm-make": "elm-make",
     "elm-package": "elm-package",
-    "elm-format": "./bin/elm-format ./src/",
-    "elm-test": "elm-test"
+
+    "elm-format": "./bin/elm-format ./src/"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "elm": "^0.17.1"
+    "elm": "0.18.*"
   },
   "devDependencies": {
-    "elm-test": "^0.17.3"
+    "elm-test": "0.18.*"
   }
 }
