@@ -153,7 +153,7 @@ dateList =
                             Expect.equal (firstResult) millennium
 
                         Nothing ->
-                            Expect.fail "Could not get first result"
+                            Expect.fail "No dates in list"
         , test "each element should be one day after the previous" <|
             \() ->
                 let
@@ -199,8 +199,8 @@ roundToDay date =
         |> Result.withDefault (Date.fromTime 0)
 
 
-expectEqualToDay : Date -> Date -> Expect.Expectation
-expectEqualToDay a b =
+expectDayEqual : Date -> Date -> Expect.Expectation
+expectDayEqual a b =
     Expect.equal (roundToDay a) (roundToDay b)
 
 
