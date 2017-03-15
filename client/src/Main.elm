@@ -2,13 +2,17 @@ module Main exposing (..)
 
 import Array
 import Date exposing (..)
-import Date.Extra.Format as Format exposing (isoDateString)
 import Html exposing (..)
 import Html.Attributes exposing (type_, value)
 import Html.Events exposing (onInput)
 import List exposing (sum)
 import Task
 import Time exposing (Time)
+
+
+-- THIRD PARTY IMPORTS
+
+import Date.Extra.Format exposing (isoDateString)
 
 
 -- PROJECT IMPORTS

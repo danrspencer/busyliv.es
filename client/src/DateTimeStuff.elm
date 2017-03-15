@@ -59,11 +59,7 @@ dateLessThan a b =
 
 dateList : Date -> Date -> List Date
 dateList startDate endDate =
-    [ startDate ]
-
-
-
---    if dateLessThan startDate endDate then
---        startDate :: dateList (addDay startDate) endDate
---    else
---        [ endDate ]
+    if dateLessThan startDate endDate then
+        startDate :: dateList (addDay startDate) endDate
+    else
+        [ endDate ]

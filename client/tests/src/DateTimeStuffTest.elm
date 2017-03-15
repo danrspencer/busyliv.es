@@ -4,14 +4,14 @@ import Date exposing (Date)
 import Expect
 import Fuzz exposing (intRange)
 import List
-import Maybe exposing (withDefault)
+import Maybe exposing (andThen, withDefault)
 import Test exposing (..)
 import Time
 
 
 --
 
-import DateTimeStuff
+import DateTimeStuff exposing (oneDay, oneWeek)
 
 
 all : Test
@@ -36,7 +36,7 @@ parseDate =
                     result =
                         DateTimeStuff.parseDate "01-01-2000"
                 in
-                    Expect.equal (Date.toTime result) millennium
+                    Expect.equal result millennium
         ]
 
 
@@ -143,25 +143,36 @@ dateList =
             \() ->
                 let
                     end =
-                        millennium + 100000
+                        DateTimeStuff.addTime 100000 millennium
 
                     result =
-                        DateTimeStuff.dateList (Date.fromTime millennium) (Date.fromTime end)
+                        DateTimeStuff.dateList millennium end
                 in
-                    Expect.equal (Date.toTime <| firstDateFromList result) millennium
-        , test "each date is one day on from the previous" <|
+                    case List.head result of
+                        Just firstResult ->
+                            Expect.equal (firstResult) millennium
+
+                        Nothing ->
+                            Expect.fail "Could not get first result"
+        , test "each element should be one day after the previous" <|
             \() ->
                 let
                     end =
-                        millennium + 100000
+                        DateTimeStuff.addTime oneWeek millennium
 
                     result =
-                        DateTimeStuff.dateList (Date.fromTime millennium) (Date.fromTime end)
+                        DateTimeStuff.dateList millennium end
 
-                    firstDate =
-                        List.head result |> withDefault (Date.fromTime 0)
+                    resultPairs =
+                        toPairs result
+
+                    firstDatePlusDay =
+                        Tuple.first >> DateTimeStuff.addTime oneDay
                 in
-                    Expect.equal (Date.toTime firstDate) millennium
+                    resultPairs
+                        |> Expect.all
+                            [ \pairs -> Expect.equal
+                            ]
         ]
 
 
@@ -169,10 +180,56 @@ dateList =
 -- HELPERS
 
 
+millennium : Date
 millennium =
-    946684800 * 1000
+    Date.fromTime (946684800 * 1000)
 
 
-firstDateFromList : List Date -> Date
-firstDateFromList =
-    List.head >> withDefault (Date.fromTime 0)
+roundToDay : Date -> Date
+roundToDay date =
+    (Date.fromString <|
+        String.concat
+            [ toString <| Date.year date
+            , "-"
+            , toString <| Date.month date
+            , "-"
+            , toString <| Date.day date
+            ]
+    )
+        |> Result.withDefault (Date.fromTime 0)
+
+
+expectEqualToDay : Date -> Date -> Expect.Expectation
+expectEqualToDay a b =
+    Expect.equal (roundToDay a) (roundToDay b)
+
+
+
+-- TODO: These probably need extracting and testing on their own!
+
+
+toTuplePair : List a -> Maybe ( a, a )
+toTuplePair values =
+    let
+        first =
+            List.head
+
+        second =
+            List.head << List.drop 1
+    in
+        case ( first values, second values ) of
+            ( Just value1, Just value2 ) ->
+                Just ( value1, value2 )
+
+            default ->
+                Nothing
+
+
+toPairs : List a -> List ( a, a )
+toPairs list =
+    case toTuplePair list of
+        Just pair ->
+            pair :: (toPairs <| List.drop 1 list)
+
+        Nothing ->
+            []
