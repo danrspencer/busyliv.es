@@ -91,20 +91,31 @@ dayPosition day =
             6
 
 
-padCalendarRow : List Date -> List (Maybe Date)
-padCalendarRow dates =
-    if List.length dates < 7 then
-        padCalendarRow <| Nothing :: dates
-    else
-        List.map
-            Just
-            dates
+calendarWeek : List Date -> List (Maybe Date)
+calendarWeek dates =
+    case List.head dates of
+        Just date ->
+            (nothings <| dayPosition <| Date.dayOfWeek date)
+                ++ (List.map Just dates)
+
+        Nothing ->
+            []
 
 
 generateCalendar : List Date -> List (List (Maybe Date))
 generateCalendar dates =
-    [ padCalendarRow dates
+    [ calendarWeek dates
     ]
+
+
+nothings : Int -> List (Maybe a)
+nothings n =
+    case n of
+        0 ->
+            []
+
+        default ->
+            Nothing :: nothings (n - 1)
 
 
 
