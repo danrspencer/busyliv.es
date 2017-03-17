@@ -5,9 +5,7 @@ import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, float, floatRange, int, intRange)
 import List
 import Maybe exposing (andThen, withDefault)
-import Random.Pcg as Random exposing (Generator)
-import Test exposing (..)
-import Time exposing (Time)
+import ElmTest.Extra exposing (..)
 
 
 --
@@ -245,7 +243,7 @@ generateCalendar =
                         ]
                 in
                     expected |> Expect.equal result
-        , test "if the dates dont start with a sunday it pads with Nothing" <|
+        , test "if the dates start with a Monday it pads with Nothing" <|
             \() ->
                 let
                     aMonday =
@@ -269,6 +267,35 @@ generateCalendar =
                           , aMonday |> DateTimeStuff.addTime (4 * oneDay) |> Just
                           , aMonday |> DateTimeStuff.addTime (5 * oneDay) |> Just
                           , aMonday |> DateTimeStuff.addTime (6 * oneDay) |> Just
+                          ]
+                        ]
+                in
+                    expected |> Expect.equal result
+        , test "if the dates start midweek it pads with Nothings" <|
+            \() ->
+                let
+                    aWednesday =
+                        millennium |> DateTimeStuff.addTime (4 * oneDay)
+
+                    end =
+                        aWednesday |> DateTimeStuff.addTime (5 * oneDay)
+
+                    dates =
+                        DateTimeStuff.dateList aWednesday end
+
+                    result =
+                        DateTimeStuff.generateCalendar dates
+
+                    expected =
+                        [ [ Nothing
+                          , Nothing
+                          , Nothing
+                          , aWednesday |> DateTimeStuff.addTime (0 * oneDay) |> Just
+                          , aWednesday |> DateTimeStuff.addTime (1 * oneDay) |> Just
+                          , aWednesday |> DateTimeStuff.addTime (2 * oneDay) |> Just
+                          , aWednesday |> DateTimeStuff.addTime (3 * oneDay) |> Just
+                          , aWednesday |> DateTimeStuff.addTime (4 * oneDay) |> Just
+                          , aWednesday |> DateTimeStuff.addTime (5 * oneDay) |> Just
                           ]
                         ]
                 in

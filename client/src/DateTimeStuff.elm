@@ -93,20 +93,12 @@ dayPosition day =
 
 padCalendarRow : List Date -> List (Maybe Date)
 padCalendarRow dates =
-    case List.head dates of
-        Just date ->
-            if Date.dayOfWeek date /= Sun then
-                Nothing
-                    :: List.map
-                        Just
-                        dates
-            else
-                List.map
-                    Just
-                    dates
-
-        Nothing ->
-            []
+    if List.length dates < 7 then
+        padCalendarRow <| Nothing :: dates
+    else
+        List.map
+            Just
+            dates
 
 
 generateCalendar : List Date -> List (List (Maybe Date))
