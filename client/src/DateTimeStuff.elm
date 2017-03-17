@@ -1,6 +1,6 @@
 module DateTimeStuff exposing (..)
 
-import Date exposing (Date, fromTime, toTime)
+import Date exposing (Date, Day(..), fromTime, toTime)
 import Result exposing (withDefault)
 import Time exposing (Time)
 
@@ -24,7 +24,8 @@ oneWeek =
 
 parseDate : String -> Date
 parseDate =
-    Date.fromString >> withDefault (Date.fromTime 0)
+    Date.fromString
+        >> withDefault (Date.fromTime 0)
 
 
 duration : Date -> Date -> Float
@@ -62,4 +63,59 @@ dateList startDate endDate =
     if dateLessThan startDate endDate then
         startDate :: dateList (addDay startDate) endDate
     else
-        [ endDate ]
+        [ startDate ]
+
+
+dayPosition : Date.Day -> Int
+dayPosition day =
+    case day of
+        Sun ->
+            0
+
+        Mon ->
+            1
+
+        Tue ->
+            2
+
+        Wed ->
+            3
+
+        Thu ->
+            4
+
+        Fri ->
+            5
+
+        Sat ->
+            6
+
+
+padCalendarRow : List Date -> List (Maybe Date)
+padCalendarRow dates =
+    case List.head dates of
+        Just date ->
+            if Date.dayOfWeek date /= Sun then
+                Nothing
+                    :: List.map
+                        Just
+                        dates
+            else
+                List.map
+                    Just
+                    dates
+
+        Nothing ->
+            []
+
+
+generateCalendar : List Date -> List (List (Maybe Date))
+generateCalendar dates =
+    [ padCalendarRow dates
+    ]
+
+
+
+----    List.foldl
+----        (\( date, calendar ) -> [])
+----        []

@@ -1,12 +1,13 @@
 module Src.DateTimeStuffTest exposing (..)
 
 import Date exposing (Date)
-import Expect
-import Fuzz exposing (intRange)
+import Expect exposing (Expectation)
+import Fuzz exposing (Fuzzer, float, floatRange, int, intRange)
 import List
 import Maybe exposing (andThen, withDefault)
+import Random.Pcg as Random exposing (Generator)
 import Test exposing (..)
-import Time
+import Time exposing (Time)
 
 
 --
@@ -17,7 +18,13 @@ import DateTimeStuff exposing (oneDay, oneWeek)
 all : Test
 all =
     describe "DateTimeStuff"
-        [ parseDate, duration, addTime, dateLessThan, dateList ]
+        [ parseDate
+        , duration
+        , addTime
+        , dateLessThan
+        , dateList
+        , generateCalendar
+        ]
 
 
 parseDate : Test
@@ -29,14 +36,14 @@ parseDate =
                     result =
                         DateTimeStuff.parseDate "not a valid date"
                 in
-                    Expect.equal (Date.toTime result) 0
+                    (Date.toTime result) |> Expect.equal 0
         , test "returns the correct date for a valid date string" <|
             \() ->
                 let
                     result =
                         DateTimeStuff.parseDate "01-01-2000"
                 in
-                    Expect.equal result millennium
+                    result |> Expect.equal millennium
         ]
 
 
@@ -44,28 +51,28 @@ duration : Test
 duration =
     describe "duration"
         [ fuzz2
-            (intRange 0 100000000)
-            (intRange 0 100000000)
+            float
+            float
             "calculates the millisconds between two dates"
           <|
             \a b ->
                 let
-                    timeA =
-                        toFloat a
-
-                    timeB =
-                        toFloat (a + b)
-
                     dateA =
-                        Date.fromTime timeA
+                        Date.fromTime <| a
 
                     dateB =
-                        Date.fromTime timeB
+                        Date.fromTime <| b + Date.toTime dateA
+
+                    timeA =
+                        Date.toTime <| dateA
+
+                    timeB =
+                        Date.toTime <| dateB
 
                     duration =
                         DateTimeStuff.duration dateA dateB
                 in
-                    Expect.equal duration (timeB - timeA)
+                    duration |> Expect.equal (timeB - timeA)
         ]
 
 
@@ -73,22 +80,22 @@ addTime : Test
 addTime =
     describe "addTime"
         [ fuzz2
-            (intRange 0 100000000)
-            (intRange 0 100000000)
+            float
+            float
             "adds a specific amount of time onto a date"
           <|
             \a b ->
                 let
-                    time =
-                        toFloat a
-
                     date =
-                        Date.fromTime <| toFloat b
+                        Date.fromTime <| b
+
+                    time =
+                        toFloat <| floor a
 
                     newDate =
                         DateTimeStuff.addTime time date
                 in
-                    Expect.equal (Date.toTime newDate) (time + Date.toTime date)
+                    (Date.toTime newDate) |> Expect.equal (time + Date.toTime date)
         ]
 
 
@@ -108,7 +115,7 @@ dateLessThan =
                     dateB =
                         Date.fromTime <| toFloat b
                 in
-                    Expect.true "dateA is less than dateB" <| DateTimeStuff.dateLessThan dateA dateB
+                    DateTimeStuff.dateLessThan dateA dateB |> Expect.true "dateA is less than dateB"
         , fuzz2
             (intRange 100000001 200000000)
             (intRange 0 100000000)
@@ -122,7 +129,7 @@ dateLessThan =
                     dateB =
                         Date.fromTime <| toFloat b
                 in
-                    Expect.false "dateA is not less than dateB" <| DateTimeStuff.dateLessThan dateA dateB
+                    DateTimeStuff.dateLessThan dateA dateB |> Expect.false "dateA is not less than dateB"
         , test "equal dates are not less than" <|
             \() ->
                 let
@@ -132,7 +139,7 @@ dateLessThan =
                     dateB =
                         Date.fromTime 100000000
                 in
-                    Expect.false "dateA is not less than dateB" <| DateTimeStuff.dateLessThan dateA dateB
+                    DateTimeStuff.dateLessThan dateA dateB |> Expect.false "dateA is not less than dateB"
         ]
 
 
@@ -163,16 +170,109 @@ dateList =
                     result =
                         DateTimeStuff.dateList millennium end
 
-                    resultPairs =
-                        toPairs result
-
-                    firstDatePlusDay =
-                        Tuple.first >> DateTimeStuff.addTime oneDay
+                    expected =
+                        [ millennium
+                        , millennium |> DateTimeStuff.addTime (1 * oneDay)
+                        , millennium |> DateTimeStuff.addTime (2 * oneDay)
+                        , millennium |> DateTimeStuff.addTime (3 * oneDay)
+                        , millennium |> DateTimeStuff.addTime (4 * oneDay)
+                        , millennium |> DateTimeStuff.addTime (5 * oneDay)
+                        , millennium |> DateTimeStuff.addTime (6 * oneDay)
+                        , millennium |> DateTimeStuff.addTime (7 * oneDay)
+                        ]
                 in
-                    resultPairs
-                        |> Expect.all
-                            [ \pairs -> Expect.equal
-                            ]
+                    result |> Expect.equal expected
+        , fuzz2
+            (float)
+            (floatRange oneWeek <| oneWeek * 52)
+            "each element should be one day after the previous"
+          <|
+            \start end ->
+                let
+                    startDate =
+                        Date.fromTime <| start
+
+                    endDate =
+                        Date.fromTime <| end + Date.toTime startDate
+
+                    increment =
+                        DateTimeStuff.addDay
+
+                    result =
+                        DateTimeStuff.dateList startDate endDate
+
+                    daysIncrement =
+                        List.foldl
+                            (\pair result -> result && (roundToDay <| increment <| Tuple.first pair) == (roundToDay <| Tuple.second pair))
+                            True
+                        <|
+                            toPairs result
+                in
+                    daysIncrement
+                        |> Expect.true
+                            ([ "Failed with ", toString startDate, " - ", toString endDate ] |> String.concat)
+        ]
+
+
+generateCalendar : Test
+generateCalendar =
+    describe "generateCalendar"
+        [ test "returns a week in a nested list" <|
+            \() ->
+                let
+                    aSunday =
+                        millennium |> DateTimeStuff.addDay
+
+                    end =
+                        aSunday |> DateTimeStuff.addWeek
+
+                    dates =
+                        DateTimeStuff.dateList aSunday end
+
+                    result =
+                        DateTimeStuff.generateCalendar dates
+
+                    expected =
+                        [ [ aSunday |> DateTimeStuff.addTime (0 * oneDay) |> Just
+                          , aSunday |> DateTimeStuff.addTime (1 * oneDay) |> Just
+                          , aSunday |> DateTimeStuff.addTime (2 * oneDay) |> Just
+                          , aSunday |> DateTimeStuff.addTime (3 * oneDay) |> Just
+                          , aSunday |> DateTimeStuff.addTime (4 * oneDay) |> Just
+                          , aSunday |> DateTimeStuff.addTime (5 * oneDay) |> Just
+                          , aSunday |> DateTimeStuff.addTime (6 * oneDay) |> Just
+                          , aSunday |> DateTimeStuff.addTime (7 * oneDay) |> Just
+                          ]
+                        ]
+                in
+                    expected |> Expect.equal result
+        , test "if the dates dont start with a sunday it pads with Nothing" <|
+            \() ->
+                let
+                    aMonday =
+                        millennium |> DateTimeStuff.addTime (2 * oneDay)
+
+                    end =
+                        aMonday |> DateTimeStuff.addTime (6 * oneDay)
+
+                    dates =
+                        DateTimeStuff.dateList aMonday end
+
+                    result =
+                        DateTimeStuff.generateCalendar dates
+
+                    expected =
+                        [ [ Nothing
+                          , aMonday |> DateTimeStuff.addTime (0 * oneDay) |> Just
+                          , aMonday |> DateTimeStuff.addTime (1 * oneDay) |> Just
+                          , aMonday |> DateTimeStuff.addTime (2 * oneDay) |> Just
+                          , aMonday |> DateTimeStuff.addTime (3 * oneDay) |> Just
+                          , aMonday |> DateTimeStuff.addTime (4 * oneDay) |> Just
+                          , aMonday |> DateTimeStuff.addTime (5 * oneDay) |> Just
+                          , aMonday |> DateTimeStuff.addTime (6 * oneDay) |> Just
+                          ]
+                        ]
+                in
+                    expected |> Expect.equal result
         ]
 
 

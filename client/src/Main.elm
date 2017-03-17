@@ -52,9 +52,9 @@ type Msg
 -- VIEW
 
 
-toListItem : a -> Html Msg
-toListItem =
-    li []
+toCell : a -> Html Msg
+toCell =
+    td []
         << List.singleton
         << text
         << toString
@@ -92,14 +92,14 @@ view model =
                     , th [] [ text "F" ]
                     , th [] [ text "S" ]
                     ]
+                , tr [] <|
+                    List.map
+                        (toCell << Date.day)
+                        (dateList model.startDate endDate)
                 ]
             , br [] []
             , br [] []
             , br [] []
-            , ul [] <|
-                List.map
-                    (toListItem << isoDateString)
-                    (dateList model.startDate endDate)
             ]
 
 
