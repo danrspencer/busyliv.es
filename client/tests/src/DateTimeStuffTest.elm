@@ -1,7 +1,7 @@
-module Src.DateTimeStuffTest exposing (..)
+module Src.DateTimeStuffTest exposing (all)
 
 import Date exposing (Date)
-import Expect exposing (Expectation)
+import Expect exposing (Expectation, equal)
 import Fuzz exposing (Fuzzer, float, floatRange, int, intRange)
 import List
 import Maybe exposing (andThen, withDefault)
@@ -21,7 +21,6 @@ all =
         , addTime
         , dateLessThan
         , dateList
-        , generateCalendar
         ]
 
 
@@ -34,14 +33,14 @@ parseDate =
                     result =
                         DateTimeStuff.parseDate "not a valid date"
                 in
-                    (Date.toTime result) |> Expect.equal 0
+                    (Date.toTime result) |> equal 0
         , test "returns the correct date for a valid date string" <|
             \() ->
                 let
                     result =
                         DateTimeStuff.parseDate "01-01-2000"
                 in
-                    result |> Expect.equal millennium
+                    result |> equal millennium
         ]
 
 
@@ -70,7 +69,7 @@ duration =
                     duration =
                         DateTimeStuff.duration dateA dateB
                 in
-                    duration |> Expect.equal (timeB - timeA)
+                    duration |> equal (timeB - timeA)
         ]
 
 
@@ -93,7 +92,7 @@ addTime =
                     newDate =
                         DateTimeStuff.addTime time date
                 in
-                    (Date.toTime newDate) |> Expect.equal (time + Date.toTime date)
+                    (Date.toTime newDate) |> equal (time + Date.toTime date)
         ]
 
 
@@ -155,7 +154,7 @@ dateList =
                 in
                     case List.head result of
                         Just firstResult ->
-                            Expect.equal (firstResult) millennium
+                            firstResult |> equal millennium
 
                         Nothing ->
                             Expect.fail "No dates in list"
@@ -179,7 +178,7 @@ dateList =
                         , millennium |> DateTimeStuff.addTime (7 * oneDay)
                         ]
                 in
-                    result |> Expect.equal expected
+                    result |> equal expected
         , fuzz2
             (float)
             (floatRange oneWeek <| oneWeek * 52)
@@ -199,107 +198,22 @@ dateList =
                     result =
                         DateTimeStuff.dateList startDate endDate
 
-                    daysIncrement =
+                    doDaysIncrement daysPair =
+                        (roundToDay <| increment <| Tuple.first daysPair)
+                            == (roundToDay <| Tuple.second daysPair)
+
+                    daysIncremented =
                         List.foldl
-                            (\pair result -> result && (roundToDay <| increment <| Tuple.first pair) == (roundToDay <| Tuple.second pair))
+                            (\pair result ->
+                                result && doDaysIncrement pair
+                            )
                             True
                         <|
                             toPairs result
                 in
-                    daysIncrement
+                    daysIncremented
                         |> Expect.true
                             ([ "Failed with ", toString startDate, " - ", toString endDate ] |> String.concat)
-        ]
-
-
-generateCalendar : Test
-generateCalendar =
-    describe "generateCalendar"
-        [ test "returns a week in a nested list" <|
-            \() ->
-                let
-                    aSunday =
-                        millennium |> DateTimeStuff.addDay
-
-                    end =
-                        aSunday |> DateTimeStuff.addWeek
-
-                    dates =
-                        DateTimeStuff.dateList aSunday end
-
-                    result =
-                        DateTimeStuff.generateCalendar dates
-
-                    expected =
-                        [ [ aSunday |> DateTimeStuff.addTime (0 * oneDay) |> Just
-                          , aSunday |> DateTimeStuff.addTime (1 * oneDay) |> Just
-                          , aSunday |> DateTimeStuff.addTime (2 * oneDay) |> Just
-                          , aSunday |> DateTimeStuff.addTime (3 * oneDay) |> Just
-                          , aSunday |> DateTimeStuff.addTime (4 * oneDay) |> Just
-                          , aSunday |> DateTimeStuff.addTime (5 * oneDay) |> Just
-                          , aSunday |> DateTimeStuff.addTime (6 * oneDay) |> Just
-                          , aSunday |> DateTimeStuff.addTime (7 * oneDay) |> Just
-                          ]
-                        ]
-                in
-                    expected |> Expect.equal result
-        , test "if the dates start with a Monday it pads with Nothing" <|
-            \() ->
-                let
-                    aMonday =
-                        millennium |> DateTimeStuff.addTime (2 * oneDay)
-
-                    end =
-                        aMonday |> DateTimeStuff.addTime (6 * oneDay)
-
-                    dates =
-                        DateTimeStuff.dateList aMonday end
-
-                    result =
-                        DateTimeStuff.generateCalendar dates
-
-                    expected =
-                        [ [ Nothing
-                          , aMonday |> DateTimeStuff.addTime (0 * oneDay) |> Just
-                          , aMonday |> DateTimeStuff.addTime (1 * oneDay) |> Just
-                          , aMonday |> DateTimeStuff.addTime (2 * oneDay) |> Just
-                          , aMonday |> DateTimeStuff.addTime (3 * oneDay) |> Just
-                          , aMonday |> DateTimeStuff.addTime (4 * oneDay) |> Just
-                          , aMonday |> DateTimeStuff.addTime (5 * oneDay) |> Just
-                          , aMonday |> DateTimeStuff.addTime (6 * oneDay) |> Just
-                          ]
-                        ]
-                in
-                    expected |> Expect.equal result
-        , test "if the dates start midweek it pads with Nothings" <|
-            \() ->
-                let
-                    aWednesday =
-                        millennium |> DateTimeStuff.addTime (4 * oneDay)
-
-                    end =
-                        aWednesday |> DateTimeStuff.addTime (5 * oneDay)
-
-                    dates =
-                        DateTimeStuff.dateList aWednesday end
-
-                    result =
-                        DateTimeStuff.generateCalendar dates
-
-                    expected =
-                        [ [ Nothing
-                          , Nothing
-                          , Nothing
-                          , aWednesday |> DateTimeStuff.addTime (0 * oneDay) |> Just
-                          , aWednesday |> DateTimeStuff.addTime (1 * oneDay) |> Just
-                          , aWednesday |> DateTimeStuff.addTime (2 * oneDay) |> Just
-                          , aWednesday |> DateTimeStuff.addTime (3 * oneDay) |> Just
-                          , aWednesday |> DateTimeStuff.addTime (4 * oneDay) |> Just
-                          , aWednesday |> DateTimeStuff.addTime (5 * oneDay) |> Just
-                          ]
-                        ]
-                in
-                    expected |> Expect.equal result
         ]
 
 
@@ -328,7 +242,7 @@ roundToDay date =
 
 expectDayEqual : Date -> Date -> Expect.Expectation
 expectDayEqual a b =
-    Expect.equal (roundToDay a) (roundToDay b)
+    equal (roundToDay a) (roundToDay b)
 
 
 
