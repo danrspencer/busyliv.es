@@ -8,11 +8,11 @@ import Date exposing (Date, Day(..))
 
 generate : List Date -> List (List (Maybe Date))
 generate =
-    padWeeks >> splitToWeeks
+    padCalendar >> splitToWeeks
 
 
-padWeeks : List Date -> List (Maybe Date)
-padWeeks dates =
+padCalendar : List Date -> List (Maybe Date)
+padCalendar dates =
     case
         ( List.head dates
         , List.head <| List.foldl (::) [] dates

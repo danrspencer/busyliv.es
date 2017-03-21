@@ -17,6 +17,7 @@ import Date.Extra.Format exposing (isoDateString)
 
 -- PROJECT IMPORTS
 
+import Calendar
 import DateTimeStuff exposing (..)
 
 
@@ -52,12 +53,25 @@ type Msg
 -- VIEW
 
 
-toCell : a -> Html Msg
-toCell =
-    td []
-        << List.singleton
-        << text
-        << toString
+toCell : (a -> String) -> Maybe a -> Html Msg
+toCell formatter value =
+    td [] <|
+        case value of
+            Just value ->
+                List.singleton <|
+                    text <|
+                        formatter value
+
+            Nothing ->
+                []
+
+
+toRow : (a -> String) -> List (Maybe a) -> Html Msg
+toRow cellFormatter values =
+    tr [] <|
+        List.map
+            (toCell cellFormatter)
+            (values)
 
 
 view : Model -> Html Msg
@@ -65,6 +79,12 @@ view model =
     let
         endDate =
             addTime model.duration model.startDate
+
+        dates =
+            dateList model.startDate endDate
+
+        cal =
+            Calendar.generate dates
     in
         div []
             [ input
@@ -82,8 +102,8 @@ view model =
             , br [] []
             , br [] []
             , br [] []
-            , table []
-                [ tr []
+            , table [] <|
+                (tr []
                     [ th [] [ text "S" ]
                     , th [] [ text "M" ]
                     , th [] [ text "T" ]
@@ -92,11 +112,10 @@ view model =
                     , th [] [ text "F" ]
                     , th [] [ text "S" ]
                     ]
-                , tr [] <|
-                    List.map
-                        (toCell << Date.day)
-                        (dateList model.startDate endDate)
-                ]
+                )
+                    :: List.map
+                        (toRow <| toString << Date.day)
+                        cal
             , br [] []
             , br [] []
             , br [] []
