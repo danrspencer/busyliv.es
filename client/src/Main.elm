@@ -10,24 +10,21 @@ import Task
 import Time exposing (Time)
 
 
--- THIRD PARTY IMPORTS
+--
 
+import Css
 import Date.Extra.Format exposing (isoDateString)
 
 
--- PROJECT IMPORTS
+--
 
 import Calendar
 import DateTimeStuff exposing (..)
+import Model exposing (Model)
+import View.Calendar
 
 
 -- MODEL
-
-
-type alias Model =
-    { startDate : Date
-    , duration : Float
-    }
 
 
 init : ( Model, Cmd Msg )
@@ -53,38 +50,11 @@ type Msg
 -- VIEW
 
 
-toCell : (a -> String) -> Maybe a -> Html Msg
-toCell formatter value =
-    td [] <|
-        case value of
-            Just value ->
-                List.singleton <|
-                    text <|
-                        formatter value
-
-            Nothing ->
-                []
-
-
-toRow : (a -> String) -> List (Maybe a) -> Html Msg
-toRow cellFormatter values =
-    tr [] <|
-        List.map
-            (toCell cellFormatter)
-            (values)
-
-
 view : Model -> Html Msg
 view model =
     let
         endDate =
             addTime model.duration model.startDate
-
-        dates =
-            dateList model.startDate endDate
-
-        cal =
-            Calendar.generate dates
     in
         div []
             [ input
@@ -101,24 +71,7 @@ view model =
                 []
             , br [] []
             , br [] []
-            , br [] []
-            , table [] <|
-                (tr []
-                    [ th [] [ text "S" ]
-                    , th [] [ text "M" ]
-                    , th [] [ text "T" ]
-                    , th [] [ text "W" ]
-                    , th [] [ text "T" ]
-                    , th [] [ text "F" ]
-                    , th [] [ text "S" ]
-                    ]
-                )
-                    :: List.map
-                        (toRow <| toString << Date.day)
-                        cal
-            , br [] []
-            , br [] []
-            , br [] []
+            , View.Calendar.view model
             ]
 
 
