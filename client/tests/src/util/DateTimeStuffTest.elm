@@ -1,4 +1,4 @@
-module Src.DateTimeStuffTest exposing (all)
+module Src.Util.DateTimeStuffTest exposing (all)
 
 import Date exposing (Date)
 import Expect exposing (Expectation, equal)
@@ -10,37 +10,16 @@ import ElmTest.Extra exposing (..)
 
 --
 
-import DateTimeStuff exposing (oneDay, oneWeek)
+import Util.DateTimeStuff as DateTimeStuff exposing (oneDay, oneWeek)
 
 
 all : Test
 all =
     describe "DateTimeStuff"
-        [ parseDate
-        , duration
+        [ duration
         , addTime
         , dateLessThan
         , dateList
-        ]
-
-
-parseDate : Test
-parseDate =
-    describe "parseDate"
-        [ test "returns epoch time 0 if given an invalid date" <|
-            \() ->
-                let
-                    result =
-                        DateTimeStuff.parseDate "not a valid date"
-                in
-                    (Date.toTime result) |> equal 0
-        , test "returns the correct date for a valid date string" <|
-            \() ->
-                let
-                    result =
-                        DateTimeStuff.parseDate "01-01-2000"
-                in
-                    result |> equal millennium
         ]
 
 
@@ -150,7 +129,7 @@ dateList =
                         DateTimeStuff.addTime 100000 millennium
 
                     result =
-                        DateTimeStuff.dateList millennium end
+                        DateTimeStuff.dateRange millennium end
                 in
                     case List.head result of
                         Just firstResult ->
@@ -165,7 +144,7 @@ dateList =
                         DateTimeStuff.addTime oneWeek millennium
 
                     result =
-                        DateTimeStuff.dateList millennium end
+                        DateTimeStuff.dateRange millennium end
 
                     expected =
                         [ millennium
@@ -196,7 +175,7 @@ dateList =
                         DateTimeStuff.addDay
 
                     result =
-                        DateTimeStuff.dateList startDate endDate
+                        DateTimeStuff.dateRange startDate endDate
 
                     doDaysIncrement daysPair =
                         (roundToDay <| increment <| Tuple.first daysPair)

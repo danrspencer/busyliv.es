@@ -1,3 +1,5 @@
 node_modules
 elm-stuff/**
 !elm-stuff/exact-dependencies.json
+
+index.css

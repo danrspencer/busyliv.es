@@ -3,9 +3,9 @@ module Main exposing (..)
 import Array
 import Date exposing (..)
 import Html exposing (..)
-import Html.Attributes exposing (type_, value)
+import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
-import List exposing (sum)
+import List exposing (singleton, sum)
 import Task
 import Time exposing (Time)
 
@@ -18,78 +18,30 @@ import Date.Extra.Format exposing (isoDateString)
 
 --
 
-import Calendar
-import DateTimeStuff exposing (..)
+import Data.Duration
 import Model exposing (Model)
-import View.Calendar
-
-
--- MODEL
+import Messages exposing (..)
+import Style.Global
+import Update exposing (update)
+import Util.DateTimeStuff exposing (..)
+import View.Main
 
 
 init : ( Model, Cmd Msg )
 init =
     ( { startDate = Date.fromTime 0
-      , duration = oneWeek
+      , duration = Data.Duration.fromTime oneWeek
       }
     , setStartDateToNow
     )
 
 
-
--- MESSAGES
-
-
-type Msg
-    = SelectStartDate String
-    | SetStartDate Date
-    | SelectEndDate String
-
-
-
--- VIEW
-
-
 view : Model -> Html Msg
 view model =
-    let
-        endDate =
-            addTime model.duration model.startDate
-    in
-        div []
-            [ input
-                [ type_ "date"
-                , value <| isoDateString model.startDate
-                , onInput SelectStartDate
-                ]
-                []
-            , input
-                [ type_ "date"
-                , value <| isoDateString endDate
-                , onInput SelectEndDate
-                ]
-                []
-            , br [] []
-            , br [] []
-            , View.Calendar.view model
-            ]
-
-
-
--- UPDATE
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        SelectStartDate startDateString ->
-            ( { model | startDate = parseDate startDateString }, Cmd.none )
-
-        SetStartDate startDate ->
-            ( { model | startDate = startDate }, Cmd.none )
-
-        SelectEndDate endDateString ->
-            ( { model | duration = calcDuration model.startDate endDateString }, Cmd.none )
+    div []
+        [ node "Link" [ href "../index.css", type_ "text/css", rel "stylesheet" ] []
+        , View.Main.view model
+        ]
 
 
 

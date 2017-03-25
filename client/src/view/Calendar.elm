@@ -1,16 +1,22 @@
 module View.Calendar exposing (view)
 
-import Date
+import Date exposing (Date)
 import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html.Attributes
 
 
 --
 
-import Calendar
-import Style.Calendar exposing (style, calendar)
-import DateTimeStuff exposing (..)
+import Data.Duration exposing (toTime)
 import Model exposing (Model)
+import Style.Calendar exposing (CssClasses(..))
+import Util.Calendar as Calendar exposing (CalendarDay(..), justDate)
+import Util.DateTimeStuff exposing (..)
+
+
+{ class } =
+    Style.Calendar.namespace
+
 
 
 --
@@ -20,43 +26,45 @@ view : Model -> Html msg
 view model =
     let
         endDate =
-            addTime model.duration model.startDate
+            model.startDate |> addTime (toTime model.duration)
 
         dates =
-            dateList model.startDate endDate
+            dateRange model.startDate endDate
     in
-        table [ Style.Calendar.style calendar ] <|
-            (tr []
-                [ th [] [ text "S" ]
-                , th [] [ text "M" ]
-                , th [] [ text "T" ]
-                , th [] [ text "W" ]
-                , th [] [ text "T" ]
-                , th [] [ text "F" ]
-                , th [] [ text "S" ]
-                ]
-            )
-                :: List.map
-                    (toRow <| toString << Date.day)
-                    (Calendar.generate dates)
+        table [ class [ CalendarTable ] ]
+            [ thead [] <| tableHeader [ "S", "M", "T", "W", "T", "F", "S" ]
+            , tbody [] <| List.map toWeekRow (Calendar.generate dates)
+            ]
 
 
-toCell : (a -> String) -> Maybe a -> Html msg
-toCell formatter value =
-    td [] <|
-        case value of
-            Just value ->
-                List.singleton <|
-                    text <|
-                        formatter value
-
-            Nothing ->
-                []
-
-
-toRow : (a -> String) -> List (Maybe a) -> Html msg
-toRow cellFormatter values =
+toWeekRow : List CalendarDay -> Html msg
+toWeekRow values =
     tr [] <|
-        List.map
-            (toCell cellFormatter)
-            (values)
+        List.map toDayCell values
+
+
+toDayCell : CalendarDay -> Html msg
+toDayCell day =
+    let
+        content =
+            text << toString << Date.day << justDate
+
+        appliedClass =
+            case day of
+                Valid day ->
+                    ActiveDay
+
+                Edge day ->
+                    EdgeDay
+    in
+        td
+            [ class [ appliedClass ] ]
+            [ content day ]
+
+
+tableHeader : List String -> List (Html msg)
+tableHeader =
+    List.singleton
+        << tr []
+        << List.map
+            (th [] << List.singleton << text)

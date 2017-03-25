@@ -1,7 +1,6 @@
-module DateTimeStuff exposing (..)
+module Util.DateTimeStuff exposing (..)
 
 import Date exposing (Date, Day(..), fromTime, toTime)
-import Result exposing (withDefault)
 import Time exposing (Time)
 
 
@@ -22,25 +21,23 @@ oneWeek =
 -- FUNCTIONS
 
 
-parseDate : String -> Date
-parseDate =
-    Date.fromString
-        >> withDefault (Date.fromTime 0)
-
-
 duration : Date -> Date -> Float
 duration startDate endDate =
     (toTime endDate) - (toTime startDate)
 
 
-calcDuration : Date -> String -> Float
-calcDuration startDate endDateString =
-    duration startDate <| parseDate endDateString
-
-
 addTime : Time -> Date -> Date
 addTime time date =
     fromTime <| (toTime date) + time
+
+
+addDays : Int -> Date -> Date
+addDays numDays date =
+    let
+        days =
+            (toFloat numDays) * oneDay
+    in
+        addTime days date
 
 
 addDay : Date -> Date
@@ -58,9 +55,9 @@ dateLessThan a b =
     (toTime a) < (toTime b)
 
 
-dateList : Date -> Date -> List Date
-dateList startDate endDate =
+dateRange : Date -> Date -> List Date
+dateRange startDate endDate =
     if dateLessThan startDate endDate then
-        startDate :: dateList (addDay startDate) endDate
+        startDate :: dateRange (addDay startDate) endDate
     else
         [ startDate ]
