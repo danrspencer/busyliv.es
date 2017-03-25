@@ -1,6 +1,6 @@
 module View.Calendar exposing (view)
 
-import Date exposing (Date)
+import Date exposing (Date, Month(..))
 import Html exposing (..)
 import Html.Attributes
 
@@ -49,16 +49,22 @@ toDayCell day =
         content =
             text << toString << Date.day << justDate
 
-        appliedClass =
+        monthClass =
+            getMonthClass << justDate
+
+        dayClass day =
             case day of
                 Valid day ->
                     ActiveDay
 
                 Edge day ->
                     EdgeDay
+
+        classes day =
+            class [ (monthClass day), (dayClass day) ]
     in
         td
-            [ class [ appliedClass ] ]
+            [ classes day ]
             [ content day ]
 
 
@@ -68,3 +74,43 @@ tableHeader =
         << tr []
         << List.map
             (th [] << List.singleton << text)
+
+
+getMonthClass : Date -> CssClasses
+getMonthClass date =
+    case Date.month date of
+        Jan ->
+            MonthJan
+
+        Feb ->
+            MonthFeb
+
+        Mar ->
+            MonthMar
+
+        Apr ->
+            MonthApr
+
+        May ->
+            MonthMay
+
+        Jun ->
+            MonthJun
+
+        Jul ->
+            MonthJul
+
+        Aug ->
+            MonthAug
+
+        Sep ->
+            MonthSep
+
+        Oct ->
+            MonthOct
+
+        Nov ->
+            MonthNov
+
+        Dec ->
+            MonthDec

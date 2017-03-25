@@ -6,6 +6,11 @@ import Css.Namespace
 import Html.CssHelpers exposing (withNamespace)
 
 
+--
+
+import Style.Colors as Colors exposing (months)
+
+
 type Namespace
     = Calendar
 
@@ -14,6 +19,18 @@ type CssClasses
     = CalendarTable
     | ActiveDay
     | EdgeDay
+    | MonthJan
+    | MonthFeb
+    | MonthMar
+    | MonthApr
+    | MonthMay
+    | MonthJun
+    | MonthJul
+    | MonthAug
+    | MonthSep
+    | MonthOct
+    | MonthNov
+    | MonthDec
 
 
 namespace =
@@ -28,6 +45,18 @@ snippet =
                 , td dayCell
                 , class ActiveDay activeDay
                 , class EdgeDay edgeDay
+                , class MonthJan [ backgroundColor months.jan ]
+                , class MonthFeb [ backgroundColor months.feb ]
+                , class MonthMar [ backgroundColor months.mar ]
+                , class MonthApr [ backgroundColor months.apr ]
+                , class MonthMay [ backgroundColor months.may ]
+                , class MonthJun [ backgroundColor months.jun ]
+                , class MonthJul [ backgroundColor months.jul ]
+                , class MonthAug [ backgroundColor months.aug ]
+                , class MonthSep [ backgroundColor months.sep ]
+                , class MonthOct [ backgroundColor months.oct ]
+                , class MonthNov [ backgroundColor months.nov ]
+                , class MonthDec [ backgroundColor months.dec ]
                 ]
             ]
         ]
