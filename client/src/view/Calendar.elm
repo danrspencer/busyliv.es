@@ -2,7 +2,7 @@ module View.Calendar exposing (view)
 
 import Date exposing (Date, Month(..))
 import Html exposing (..)
-import Html.Attributes
+import Html.Attributes exposing (style)
 
 
 --
@@ -32,25 +32,37 @@ view model =
             dateRange model.startDate endDate
     in
         table [ class [ CalendarTable ] ]
-            [ thead [] <| tableHeader [ "S", "M", "T", "W", "T", "F", "S" ]
-            , tbody [] <| List.map toWeekRow (Calendar.generate dates)
+            [ thead [] <| tableHeader [ "S", "M", "T", "W", "T", "F", "S", "" ]
+            , tbody [] <| List.map weekRow (Calendar.generate dates)
             ]
 
 
-toWeekRow : List CalendarDay -> Html msg
-toWeekRow values =
-    tr [] <|
-        List.map toDayCell values
+weekRow : List CalendarDay -> Html msg
+weekRow days =
+    tr [] <| (List.map dayCell days) ++ [ monthNameCell days ]
 
 
-toDayCell : CalendarDay -> Html msg
-toDayCell day =
+monthNameCell : List CalendarDay -> Html msg
+monthNameCell days =
+    let
+        firstDay =
+            List.head << List.filter ((==) 1 << Date.day << justDate)
+    in
+        case firstDay days of
+            Just day ->
+                td
+                    [ class [ MonthNameColumn, getMonthCssClass day ] ]
+                    [ text <| toString <| Date.month <| justDate day ]
+
+            Nothing ->
+                td [ class [ MonthNameColumn ] ] []
+
+
+dayCell : CalendarDay -> Html msg
+dayCell day =
     let
         content =
             text << toString << Date.day << justDate
-
-        monthClass =
-            getMonthClass << justDate
 
         dayClass day =
             case day of
@@ -61,7 +73,7 @@ toDayCell day =
                     EdgeDay
 
         classes day =
-            class [ (monthClass day), (dayClass day) ]
+            class [ (getMonthCssClass day), (dayClass day) ]
     in
         td
             [ classes day ]
@@ -76,9 +88,9 @@ tableHeader =
             (th [] << List.singleton << text)
 
 
-getMonthClass : Date -> CssClasses
-getMonthClass date =
-    case Date.month date of
+getMonthCssClass : CalendarDay -> CssClasses
+getMonthCssClass date =
+    case Date.month <| justDate date of
         Jan ->
             MonthJan
 

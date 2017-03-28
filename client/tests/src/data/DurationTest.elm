@@ -17,7 +17,7 @@ import Data.Duration exposing (..)
 
 all : Test
 all =
-    describe "Duration"
+    describe "Data.Duration"
         [ fuzz negativeFloat "returns 0 when given a duration less than 0" <|
             \a ->
                 let

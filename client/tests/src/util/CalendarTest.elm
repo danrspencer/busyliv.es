@@ -13,7 +13,7 @@ import Util.DateTimeStuff as DateTimeStuff exposing (..)
 
 all : Test
 all =
-    describe "Calendar"
+    describe "Util.Calendar"
         [ generate ]
 
 

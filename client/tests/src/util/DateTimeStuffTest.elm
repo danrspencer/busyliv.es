@@ -15,7 +15,7 @@ import Util.DateTimeStuff as DateTimeStuff exposing (oneDay, oneWeek)
 
 all : Test
 all =
-    describe "DateTimeStuff"
+    describe "Util.DateTimeStuff"
         [ duration
         , addTime
         , dateLessThan

@@ -4,9 +4,6 @@ import Date exposing (Date, Day(..), fromTime, toTime)
 import Time exposing (Time)
 
 
--- TIME UNITS
-
-
 oneDay : Time
 oneDay =
     24 * 60 * 60 * 1000
@@ -15,10 +12,6 @@ oneDay =
 oneWeek : Time
 oneWeek =
     7 * oneDay
-
-
-
--- FUNCTIONS
 
 
 duration : Date -> Date -> Float

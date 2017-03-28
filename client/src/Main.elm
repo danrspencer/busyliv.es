@@ -30,7 +30,7 @@ import View.Main
 init : ( Model, Cmd Msg )
 init =
     ( { startDate = Date.fromTime 0
-      , duration = Data.Duration.fromTime oneWeek
+      , duration = Data.Duration.fromTime (oneWeek * 52)
       }
     , setStartDateToNow
     )
