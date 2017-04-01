@@ -21,7 +21,7 @@
       <envs />
     </TaskOptions>
     <TaskOptions isEnabled="true">
-      <option name="arguments" value="$ProjectFileDir$/client/src/Stylesheets.elm --pathToMake=$ProjectFileDir$/client/node_modules/.bin/elm-make --root=$ProjectFileDir$/client/" />
+      <option name="arguments" value="$ProjectFileDir$/application/client/src/Stylesheets.elm --pathToMake=$ProjectFileDir$/application/client/node_modules/.bin/elm-make --root=$ProjectFileDir$/application/client/" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
