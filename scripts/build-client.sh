@@ -2,14 +2,32 @@
 
 cd application/client
 
-echo "## Installing node dependencies ##"
+echo ""
+echo "##################################"
+echo "## Installing Node dependencies ##"
+echo "##################################"
 npm install
 
-echo "## Installing elm dependencies ##"
+echo ""
+echo "#################################"
+echo "## Installing Elm dependencies ##"
+echo "#################################"
 npm run elm-package -- install -y
 
-echo "## Installing elm test dependencies ##"
+echo ""
+echo "######################################"
+echo "## Installing Elm test dependencies ##"
+echo "######################################"
 (cd tests && ../node_modules/.bin/elm-package install -y)
 
+echo ""
+echo "###################"
 echo "## Running tests ##"
+echo "###################"
 npm test
+
+echo ""
+echo "################"
+echo "## Elm build ##"
+echo "###############"
+npm build
