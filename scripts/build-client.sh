@@ -3,16 +3,10 @@
 cd application/client
 
 echo ""
-echo "#####################"
-echo "## Installing Yarn ##"
-echo "#####################"
-npm install yarn
-
-echo ""
 echo "##################################"
 echo "## Installing Node dependencies ##"
 echo "##################################"
-./node_modules/.bin/yarn install
+npm install
 
 echo ""
 echo "#################################"
