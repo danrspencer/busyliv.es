@@ -3,9 +3,9 @@
 cd application/client
 
 echo ""
-echo "##################################"
+echo "#####################"
 echo "## Installing Yarn ##"
-echo "##################################"
+echo "#####################"
 npm install yarn
 
 echo ""
