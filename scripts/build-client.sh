@@ -4,9 +4,15 @@ cd application/client
 
 echo ""
 echo "##################################"
+echo "## Installing Yarn ##"
+echo "##################################"
+npm install yarn -g
+
+echo ""
+echo "##################################"
 echo "## Installing Node dependencies ##"
 echo "##################################"
-npm install
+yarn install
 
 echo ""
 echo "#################################"
@@ -27,7 +33,7 @@ echo "###################"
 npm test
 
 echo ""
-echo "################"
-echo "## Elm build ##"
-echo "###############"
+echo "#######################"
+echo "## Running Elm build ##"
+echo "#######################"
 npm build
