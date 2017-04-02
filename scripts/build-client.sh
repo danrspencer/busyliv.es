@@ -6,13 +6,13 @@ echo ""
 echo "##################################"
 echo "## Installing Yarn ##"
 echo "##################################"
-npm install yarn -g
+npm install yarn
 
 echo ""
 echo "##################################"
 echo "## Installing Node dependencies ##"
 echo "##################################"
-yarn install
+./node_modules/.bin/yarn install
 
 echo ""
 echo "#################################"
