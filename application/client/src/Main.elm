@@ -39,7 +39,7 @@ init =
 view : Model -> Html Msg
 view model =
     div []
-        [ node "Link" [ href "../index.css", type_ "text/css", rel "stylesheet" ] []
+        [ node "Link" [ href "index.css", type_ "text/css", rel "stylesheet" ] []
         , View.Main.view model
         ]
 

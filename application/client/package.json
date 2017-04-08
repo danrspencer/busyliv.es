@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run elm-css && npm run elm-reactor",
+    "build": "npm run elm-make -- ./src/Main.elm --output=./build/index.html && npm run elm-css -- ./src/Stylesheets.elm --output=./build",
     "test": "lobo",
     "elm": "elm",
     "elm-repl": "elm-repl",
@@ -12,7 +13,7 @@
     "elm-make": "elm-make",
     "elm-package": "elm-package",
     "elm-format": "./bin/elm-format ./src/",
-    "elm-css": "elm-css ./src/Stylesheets.elm"
+    "elm-css": "elm-css ./src/Stylesheets.elm --output=./src"
   },
   "author": "",
   "license": "ISC",

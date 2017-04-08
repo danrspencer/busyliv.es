@@ -104,7 +104,7 @@ twoStepBlend : Color -> Color -> (Int -> Color)
 twoStepBlend a b =
     let
         alpha =
-            0.25
+            0.3
 
         fromCssColor color =
             ( color.red, color.green, color.blue )

@@ -30,4 +30,4 @@ echo ""
 echo "#######################"
 echo "## Running Elm build ##"
 echo "#######################"
-npm build
+npm run build

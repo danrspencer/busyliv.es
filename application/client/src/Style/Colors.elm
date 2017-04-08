@@ -7,16 +7,16 @@ import Css exposing (Color, rgb)
 
 
 winter =
-    rgb 0 255 255
+    rgb 155 255 255
 
 
 spring =
-    rgb 0 255 0
+    rgb 127 255 0
 
 
 summer =
-    rgb 255 255 0
+    rgb 255 127 0
 
 
 autumn =
-    rgb 255 0 0
+    rgb 150 75 65

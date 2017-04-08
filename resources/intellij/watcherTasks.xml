@@ -21,22 +21,22 @@
       <envs />
     </TaskOptions>
     <TaskOptions isEnabled="true">
-      <option name="arguments" value="$ProjectFileDir$/application/client/src/Stylesheets.elm --pathToMake=$ProjectFileDir$/application/client/node_modules/.bin/elm-make --root=$ProjectFileDir$/application/client/" />
+      <option name="arguments" value="$ProjectFileDir$/application/client/src/Stylesheets.elm --pathToMake=$ProjectFileDir$/application/client/node_modules/.bin/elm-make --output=$ProjectFileDir$/application/client/src" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
       <option name="fileExtension" value="elm" />
       <option name="immediateSync" value="false" />
       <option name="name" value="Elm Css" />
-      <option name="output" value="$ProjectFileDir$/client" />
+      <option name="output" value="$ProjectFileDir$/application/client" />
       <option name="outputFilters">
         <array />
       </option>
       <option name="outputFromStdout" value="false" />
-      <option name="program" value="$PROJECT_DIR$/client/node_modules/.bin/elm-css" />
+      <option name="program" value="$PROJECT_DIR$/application/client/node_modules/.bin/elm-css" />
       <option name="scopeName" value="Styles" />
       <option name="trackOnlyRoot" value="false" />
-      <option name="workingDir" value="$ProjectFileDir$/client/" />
+      <option name="workingDir" value="$ProjectFileDir$/application/client/" />
       <envs />
     </TaskOptions>
   </component>
