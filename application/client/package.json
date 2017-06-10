@@ -7,6 +7,7 @@
     "start": "npm run elm-css && npm run elm-reactor",
     "build": "npm run elm-make -- ./src/Main.elm --output=./build/index.html && npm run elm-css -- ./src/Stylesheets.elm --output=./build",
     "test": "lobo",
+    "test:watch": "lobo --watch",
     "elm": "elm",
     "elm-repl": "elm-repl",
     "elm-reactor": "elm-reactor",
